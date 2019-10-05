@@ -10,6 +10,8 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -22,14 +24,36 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
+
+import com.fiit.sipvs.XmlZadanie.model.Course;
+import com.fiit.sipvs.XmlZadanie.model.Student;
+
+import javafx.collections.ObservableList;
+
 import org.w3c.dom.Document;
 
 public class XmlManipulator {
 	
+	private static String path="";
 	
-	
-	static boolean validateAgainstXSD(InputStream xml, InputStream xsd)
+	public void validateAgainstXSD()
 	{
+		 File file1 = new File(path);
+		  File file2 = new File(getClass().getClassLoader().getResource("xml/schema.xsd").toString());
+		  
+		 InputStream xml = null;
+		 InputStream xsd = null;
+		try {
+			xml = new FileInputStream(file1);
+			xsd = new FileInputStream(file2);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		    
+		  
+		  
+		
 	    try
 	    {
 	        SchemaFactory factory = 
@@ -37,64 +61,86 @@ public class XmlManipulator {
 	        Schema schema = factory.newSchema(new StreamSource(xsd));
 	        Validator validator = schema.newValidator();
 	        validator.validate(new StreamSource(xml));
-	        return true;
+	        System.out.println("OK");
+	        
 	    }
 	    catch(Exception ex)
 	    {
-	        return false;
+	        System.out.println("ERROR");
 	    }
 	}
 	
-	public static void generateXml() {
+	public static void generateXml(Course course, ObservableList<Student> students, String path) {
 
 		  try {
 
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
-			// root elements
 			Document doc = docBuilder.newDocument();
-			Element rootElement = doc.createElement("company");
+			Element rootElement = doc.createElement("Aplications");
 			doc.appendChild(rootElement);
 
-			// staff elements
-			Element staff = doc.createElement("Staff");
-			rootElement.appendChild(staff);
-
-			// set attribute to staff element
-			Attr attr = doc.createAttribute("id");
-			attr.setValue("1");
-			staff.setAttributeNode(attr);
+			Element aplication = doc.createElement("Aplication");
+			rootElement.appendChild(aplication);
 
 			// shorten way
 			// staff.setAttribute("id", "1");
 
-			// firstname elements
-			Element firstname = doc.createElement("firstname");
-			firstname.appendChild(doc.createTextNode("yong"));
-			staff.appendChild(firstname);
+			Element courseTitle = doc.createElement("CourseTitle");
+			courseTitle.setTextContent(course.getCourseTitle());
+			aplication.appendChild(courseTitle);
 
-			// lastname elements
-			Element lastname = doc.createElement("lastname");
-			lastname.appendChild(doc.createTextNode("mook kim"));
-			staff.appendChild(lastname);
+			Element courseRoom = doc.createElement("CourseRoom");
+			courseRoom.setTextContent(course.getCourseRoom());
+			aplication.appendChild(courseRoom);
 
-			// nickname elements
-			Element nickname = doc.createElement("nickname");
-			nickname.appendChild(doc.createTextNode("mkyong"));
-			staff.appendChild(nickname);
+			Element courseDate = doc.createElement("CourseDate");
+			courseDate.setTextContent(course.getCourseDate());
+			aplication.appendChild(courseDate);
 
-			// salary elements
-			Element salary = doc.createElement("salary");
-			salary.appendChild(doc.createTextNode("100000"));
-			staff.appendChild(salary);
+			Element courseNewbie = doc.createElement("CourseNewbie");
+			courseNewbie.setTextContent(course.getCourseNewbie().toString());
+			aplication.appendChild(courseNewbie);
 
-			// write the content into xml file
+			Element courseLessons = doc.createElement("CourseLessons");
+			courseLessons.setTextContent(course.getCourseLessons().toString());
+			aplication.appendChild(courseLessons);
+			
+			Element studentsElement = doc.createElement("Students");
+			//studentsElement.setTextContent(course.getCourseLessons().toString());
+			aplication.appendChild(studentsElement);
+			
+			int i = 1 ;
+			for (Student student : students) {
+				Element studentElement = doc.createElement("Student");
+				//studentsElement.setTextContent(course.getCourseLessons().toString());
+				
+				studentElement.setAttribute("id", String.valueOf(i));
+				i++;
+				
+				Element studentFirstName = doc.createElement("StudentFirstName");
+				studentFirstName.setTextContent(student.getFirstName());
+				studentElement.appendChild(studentFirstName);
+				
+				Element studentLastName = doc.createElement("StudentLastName");
+				studentLastName.setTextContent(student.getLastName());
+				studentElement.appendChild(studentLastName);
+				
+				Element studentMobile = doc.createElement("StudentMobile");
+				studentMobile.setTextContent(student.getMobile());
+				studentElement.appendChild(studentMobile);
+				
+				studentsElement.appendChild(studentElement);
+				
+			}
+			
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
 			Transformer transformer = transformerFactory.newTransformer();
 			DOMSource source = new DOMSource(doc);
-			StreamResult result = new StreamResult(new File("C:\\file.xml"));
-
+			
+			StreamResult result = new StreamResult(path);
+			XmlManipulator.path= path;
 			// Output to console for testing
 			// StreamResult result = new StreamResult(System.out);
 

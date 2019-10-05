@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="Applications">
+		<xs:complexType>
+			<xs:sequence minOccurs="1" maxOccurs="unbounded">
+				<xs:element name="Application" type="application"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:complexType name="application">
+		<xs:sequence>
+			<xs:element name="CourseTitle" type="xs:string"/>
+			<xs:element name="CourseRoom" type="xs:string"/>
+			<xs:element name="CourseDate" type="xs:date"/>
+			<xs:element name="CourseTime" type="xs:time"/>
+			<xs:element name="CourseNewbie" type="xs:boolean"/>
+			<xs:element name="CourseLessons" type="xs:integer"/>
+			<xs:element name="Students" type="students"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="students">
+		<xs:sequence minOccurs="0" maxOccurs="30">
+			<xs:element name="Student" type="student"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="student">
+		<xs:sequence>
+			<xs:element name="StudentFirstName" type="xs:string"/>
+			<xs:element name="StudentLastName" type="xs:string"/>
+			<xs:element name="StudentMobile" type="xs:string"/>
+		</xs:sequence>
+		<xs:attribute name="id" type="xs:integer" use="required"/>
+	</xs:complexType>
+	
+</xs:schema>
