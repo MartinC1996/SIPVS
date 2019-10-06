@@ -34,20 +34,19 @@ import org.w3c.dom.Document;
 
 public class XmlManipulator {
 	
-	private static String path="";
+	public static String path = "";
 	
 	public void validateAgainstXSD()
 	{
-		 File file1 = new File(path);
-		  File file2 = new File(getClass().getClassLoader().getResource("xml/schema.xsd").toString());
-		  
-		 InputStream xml = null;
-		 InputStream xsd = null;
+		File file1 = new File(path);
+		File file2 = new File(getClass().getClassLoader().getResource("xml/schema.xsd").getPath());
+
+		InputStream xml = null;
+		InputStream xsd = null;
 		try {
 			xml = new FileInputStream(file1);
 			xsd = new FileInputStream(file2);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		    
@@ -64,8 +63,9 @@ public class XmlManipulator {
 	        System.out.println("OK");
 	        
 	    }
-	    catch(Exception ex)
+	    catch(Exception e)
 	    {
+			e.printStackTrace();
 	        System.out.println("ERROR");
 	    }
 	}

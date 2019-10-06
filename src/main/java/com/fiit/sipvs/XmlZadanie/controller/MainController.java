@@ -1,6 +1,8 @@
 package com.fiit.sipvs.XmlZadanie.controller;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -30,6 +32,12 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
+
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.transform.stream.StreamResult;
 
 public class MainController implements Initializable {
 	
@@ -152,6 +160,7 @@ public class MainController implements Initializable {
 					
 					
 				}catch(Exception e) {
+					e.printStackTrace();
 					Alert alert = new Alert(AlertType.ERROR);
 					alert.setTitle("ERROR");
 					alert.setHeaderText("IDIOT");
@@ -166,7 +175,7 @@ public class MainController implements Initializable {
 		generateXsl.setOnAction(new EventHandler<ActionEvent>() {
 
 			public void handle(ActionEvent event) {
-				addStudentToCourse();
+				xslTransform();
 
 			}
 
@@ -200,6 +209,22 @@ public class MainController implements Initializable {
 		
 		
 	}
-	
-	
+
+	private void xslTransform() {
+
+		try {
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			Source xsl = new StreamSource(getClass().getClassLoader().getResource("xml/stylesheet.xsl").getPath());
+			Source xml = new StreamSource(getClass().getClassLoader().getResource("xml/export.xml").getPath()); // TODO replace with XmlManipulator.path
+			String html = "D:\\Users\\Pc\\Desktop\\out.html"; // TODO change
+			OutputStream outputStream = new FileOutputStream(html);
+			Transformer transformer = transformerFactory.newTransformer(xsl);
+			transformer.transform(xml, new StreamResult(outputStream));
+			outputStream.close();
+		}
+		catch (Exception e) {
+			System.out.println(e);
+			e.printStackTrace();
+		}
+	}
 }
