@@ -1,7 +1,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
     <xsl:output method="html"/>
 
-    <xsl:template match="/Aplications/Aplication">
+    <xsl:template match="/Applications/Application">
         <head>
             <style type="text/css">
                 .mainblock {
@@ -71,7 +71,7 @@
                     </div>
                     <div class="field">
                         <p>Course Time</p>
-                        <p>nemam cas<xsl:value-of select="CourseTime"/></p>
+                        <p><xsl:value-of select="CourseTime"/></p>
                     </div>
                     <div class="field">
                         <p>Course Lessons</p>
@@ -106,7 +106,7 @@
         </body></html>
     </xsl:template>
 
-    <xsl:template match="/Aplications/Aplication/CourseNewbie">
+    <xsl:template match="/Applications/Application/CourseNewbie">
         <p>
             <xsl:choose>
                 <xsl:when test="string(.) = 'true'">✔ </xsl:when>

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
+import javafx.util.StringConverter;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -100,11 +102,38 @@ public class MainController implements Initializable {
 	    
 	        );   
 	
+	private XmlManipulator xmlManipulator = new XmlManipulator();
+	
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		Init();
 	}
 
 	private void Init() {
+	    datePicker.setPromptText("yyyy-MM-dd");
+	    
+	    StringConverter<LocalDate> converter = new StringConverter<LocalDate>() {
+            DateTimeFormatter dateFormatter =
+                      DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            
+            @Override
+            public String toString(LocalDate date) {
+                if (date != null) {
+                    return dateFormatter.format(date);
+                } else {
+                    return "";
+                }
+            }
+            @Override
+            public LocalDate fromString(String string) {
+                if (string != null && !string.isEmpty()) {
+                    return LocalDate.parse(string, dateFormatter);
+                } else {
+                    return null;
+                }
+            }
+        };   
+        datePicker.setConverter(converter);
+	    
 		addStudentButton.setOnAction(new EventHandler<ActionEvent>() {
 
 			public void handle(ActionEvent event) {
@@ -117,9 +146,8 @@ public class MainController implements Initializable {
 		validateXml.setOnAction(new EventHandler<ActionEvent>() {
 
 			public void handle(ActionEvent event) {
-				XmlManipulator xml = new XmlManipulator();
-				xml.validateAgainstXSD();
-
+				xmlManipulator.validateAgainstXSD(generateXsl);
+				
 			}
 
 		});
@@ -147,7 +175,7 @@ public class MainController implements Initializable {
 					
 					FileChooser fileChooser = new FileChooser();
 					FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("XML files (*.xml)",
-							"*.txt");
+							"*.xml");
 					fileChooser.getExtensionFilters().add(extFilter);
 
 					// Show save file dialog
@@ -155,6 +183,7 @@ public class MainController implements Initializable {
 
 					if (file != null) {
 						XmlManipulator.generateXml(c, students, file.getAbsolutePath());
+						validateXml.setDisable(false);
 					}
 					
 					
@@ -163,8 +192,8 @@ public class MainController implements Initializable {
 					e.printStackTrace();
 					Alert alert = new Alert(AlertType.ERROR);
 					alert.setTitle("ERROR");
-					alert.setHeaderText("IDIOT");
-					alert.setContentText("YOU FUCKED UP");
+					alert.setHeaderText("CAREFULL");
+					alert.setContentText("Check Date Format, Time Format. Also Course Lessons must be integer");
 
 					alert.showAndWait();
 				}		
@@ -175,7 +204,17 @@ public class MainController implements Initializable {
 		generateXsl.setOnAction(new EventHandler<ActionEvent>() {
 
 			public void handle(ActionEvent event) {
-				xslTransform();
+				FileChooser fileChooser = new FileChooser();
+				FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("HTML files (*.html)",
+						"*.html");
+				fileChooser.getExtensionFilters().add(extFilter);
+
+				// Show save file dialog
+				File file = fileChooser.showSaveDialog(mainBorderPane.getScene().getWindow());
+
+				if (file != null) {
+					xmlManipulator.xslTransform(file.getAbsolutePath());
+				}
 
 			}
 
@@ -189,7 +228,10 @@ public class MainController implements Initializable {
 		
 		table.setItems(students);
 		
-		courseTime.setText("HH:MM");
+		courseTime.setText("21:00:00");
+		
+		validateXml.setDisable(true);
+		generateXsl.setDisable(true);
 	}
 	
 	
@@ -210,21 +252,4 @@ public class MainController implements Initializable {
 		
 	}
 
-	private void xslTransform() {
-
-		try {
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			Source xsl = new StreamSource(getClass().getClassLoader().getResource("xml/stylesheet.xsl").getPath());
-			Source xml = new StreamSource(getClass().getClassLoader().getResource("xml/export.xml").getPath()); // TODO replace with XmlManipulator.path
-			String html = "D:\\Users\\Pc\\Desktop\\out.html"; // TODO change
-			OutputStream outputStream = new FileOutputStream(html);
-			Transformer transformer = transformerFactory.newTransformer(xsl);
-			transformer.transform(xml, new StreamResult(outputStream));
-			outputStream.close();
-		}
-		catch (Exception e) {
-			System.out.println(e);
-			e.printStackTrace();
-		}
-	}
 }

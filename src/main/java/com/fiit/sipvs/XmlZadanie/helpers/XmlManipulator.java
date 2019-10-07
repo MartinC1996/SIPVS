@@ -1,7 +1,7 @@
 package com.fiit.sipvs.XmlZadanie.helpers;
 
 import java.io.InputStream;
-
+import java.io.OutputStream;
 
 import javax.xml.XMLConstants;
 import javax.xml.transform.stream.StreamSource;
@@ -12,10 +12,12 @@ import javax.xml.validation.Validator;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -29,6 +31,9 @@ import com.fiit.sipvs.XmlZadanie.model.Course;
 import com.fiit.sipvs.XmlZadanie.model.Student;
 
 import javafx.collections.ObservableList;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.Alert.AlertType;
 
 import org.w3c.dom.Document;
 
@@ -36,7 +41,7 @@ public class XmlManipulator {
 	
 	public static String path = "";
 	
-	public void validateAgainstXSD()
+	public void validateAgainstXSD(Button bt)
 	{
 		File file1 = new File(path);
 		File file2 = new File(getClass().getClassLoader().getResource("xml/schema.xsd").getPath());
@@ -60,13 +65,23 @@ public class XmlManipulator {
 	        Schema schema = factory.newSchema(new StreamSource(xsd));
 	        Validator validator = schema.newValidator();
 	        validator.validate(new StreamSource(xml));
-	        System.out.println("OK");
+	        
+	        Alert alert = new Alert(AlertType.INFORMATION);
+			alert.setTitle("INFORMATION");
+			alert.setHeaderText("XSD SCHEMA VALIDATION");
+			alert.setContentText("XML IS VALID");
+			alert.showAndWait();
+	        bt.setDisable(false);
 	        
 	    }
 	    catch(Exception e)
 	    {
 			e.printStackTrace();
-	        System.out.println("ERROR");
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("ERROR");
+			alert.setHeaderText("XSD SCHEMA VALIDATION");
+			alert.setContentText("ERROR IN XMLr");
+			alert.showAndWait();
 	    }
 	}
 	
@@ -78,10 +93,10 @@ public class XmlManipulator {
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
 			Document doc = docBuilder.newDocument();
-			Element rootElement = doc.createElement("Aplications");
+			Element rootElement = doc.createElement("Applications");
 			doc.appendChild(rootElement);
 
-			Element aplication = doc.createElement("Aplication");
+			Element aplication = doc.createElement("Application");
 			rootElement.appendChild(aplication);
 
 			// shorten way
@@ -98,6 +113,10 @@ public class XmlManipulator {
 			Element courseDate = doc.createElement("CourseDate");
 			courseDate.setTextContent(course.getCourseDate());
 			aplication.appendChild(courseDate);
+			
+			Element courseTime = doc.createElement("CourseTime");
+			courseTime.setTextContent(course.getCourseTime());
+			aplication.appendChild(courseTime);
 
 			Element courseNewbie = doc.createElement("CourseNewbie");
 			courseNewbie.setTextContent(course.getCourseNewbie().toString());
@@ -154,5 +173,22 @@ public class XmlManipulator {
 			tfe.printStackTrace();
 		  }
 		}
+	
+	public void xslTransform(String saveFilePath) {
 
+		try {
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			Source xsl = new StreamSource(getClass().getClassLoader().getResource("xml/stylesheet.xsl").getPath());
+			Source xml = new StreamSource(path); 
+			
+			OutputStream outputStream = new FileOutputStream(saveFilePath);
+			Transformer transformer = transformerFactory.newTransformer(xsl);
+			transformer.transform(xml, new StreamResult(outputStream));
+			outputStream.close();
+		}
+		catch (Exception e) {
+			System.out.println(e);
+			e.printStackTrace();
+		}
+	}
 }
