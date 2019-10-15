@@ -78,7 +78,8 @@
         <items>
             <Button fx:id="saveXml" mnemonicParsing="false" prefHeight="31.0" prefWidth="150.0" text="%saveXml" />
           <Button fx:id="validateXml" mnemonicParsing="false" prefHeight="31.0" prefWidth="150.0" text="%validateXml" />
-            <Button fx:id="generateXsl" mnemonicParsing="false" prefHeight="31.0" prefWidth="152.0" text="%generateXsl" />
+            <Button fx:id="generateXsl" mnemonicParsing="false" prefHeight="31.0" prefWidth="150.0" text="%generateXsl" />
+            <Button fx:id="signXml" mnemonicParsing="false" prefHeight="31.0" prefWidth="150.0" text="%signXml" />
         </items>
       </ToolBar>
    </bottom>

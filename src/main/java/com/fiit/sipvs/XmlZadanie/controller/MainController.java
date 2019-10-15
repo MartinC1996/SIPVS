@@ -59,6 +59,9 @@ public class MainController implements Initializable {
 	Button generateXsl;
 
 	@FXML
+	Button signXml;
+
+	@FXML
 	DatePicker datePicker;
 	
 	@FXML
@@ -215,6 +218,15 @@ public class MainController implements Initializable {
 				if (file != null) {
 					xmlManipulator.xslTransform(file.getAbsolutePath());
 				}
+
+			}
+
+		});
+		
+		signXml.setOnAction(new EventHandler<ActionEvent>() {
+
+			public void handle(ActionEvent event) {
+				//call XadesSigner
 
 			}
 
