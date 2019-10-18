@@ -1,0 +1,41 @@
+Use https://www.slovensko.sk/static/zep/java_apps/
+
+
+https://www.slovensko.sk/static/zep/java_apps/dsigner-2.0.0.17-A2D004.jar
+https://www.slovensko.sk/static/zep/java_apps/dsigner-config-2.4-A2D004.jar
+
+https://www.slovensko.sk/static/zep/java_apps/slf4j-simple-1.7.10-A2D004.jar
+https://www.slovensko.sk/static/zep/java_apps/slf4j-api-1.7.10-A2D004.jar
+
+https://www.slovensko.sk/static/zep/java_apps/bcpkix-jdk15on-1.54.1-A2D004.jar
+https://www.slovensko.sk/static/zep/java_apps/bcprov-jdk15on-1.54.1-A2D004.jar
+https://www.slovensko.sk/static/zep/java_apps/JTattoo-1.6.10-A2D004.jar
+
+https://www.slovensko.sk/static/zep/java_apps/xalan-2.7.2-A2D004.jar
+https://www.slovensko.sk/static/zep/java_apps/xmlsec-2.0.6-A2D004.jar
+
+<!--  Apache Xerces -->
+https://www.slovensko.sk/static/zep/java_apps/serializer-2.11.0-A2D004.jar
+https://www.slovensko.sk/static/zep/java_apps/xml-apis-2.11.0-A2D004.jar
+https://www.slovensko.sk/static/zep/java_apps/xercesImpl-2.11.0-A2D004.jar
+
+<!-- TXT plugin -->
+https://www.slovensko.sk/static/zep/java_apps/dsigner-plugin-txt-2.0.0.17-A2D004.jar
+
+<!-- PNG plugin -->
+https://www.slovensko.sk/static/zep/java_apps/dsigner-plugin-png-2.0.0.17-A2D004.jar
+
+<!-- Windows -->
+https://www.slovensko.sk/static/zep/java_apps/ditecmscapi-1.1-A2D004.jar
+
+<!-- xmlplugin -->
+<!-- ???javafx-runtime -->
+https://www.slovensko.sk/static/zep/java_apps/dsigner-plugin-xml-2.0.0.17-A2D004.jar
+https://www.slovensko.sk/static/zep/java_apps/jsoup-1.8.3-A2D004.jar
+
+<!-- PDF plugin -->
+https://www.slovensko.sk/static/zep/java_apps/dsigner-plugin-pdf-2.0.0.17-A2D004.jar
+
+<!-- PDF plugin Windows amd64 x86_64 -->
+https://www.slovensko.sk/static/zep/java_apps/libPDFNetC-windows-x64-7.0.1-A2D004.jar
+https://www.slovensko.sk/static/zep/java_apps/PDFNet-windows-x64-7.0.1-A2D004.jar

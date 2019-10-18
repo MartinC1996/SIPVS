@@ -1,5 +1,6 @@
 package com.fiit.sipvs.XmlZadanie.helpers;
 
+import sk.ditec.zep.dsigner.xades.XadesSig;
 import sk.ditec.zep.dsigner.xades.plugin.DataObject;
 import sk.ditec.zep.dsigner.xades.plugins.xmlplugin.XmlPlugin;
 
@@ -23,7 +24,7 @@ public class XadesSigner {
 			return;
 		}
 
-		rc = dSigner.addObject(xmlObject);
+		int rc = dSigner.addObject(xmlObject);
 		if (rc != 0) {
 			System.out.println("XadesSig.addObject() errorCode=" + rc + ", errorMessage=" + dSigner.getErrorMessage());
 			return;
