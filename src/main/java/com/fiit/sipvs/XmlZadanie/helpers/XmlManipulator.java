@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -33,6 +34,7 @@ import com.fiit.sipvs.XmlZadanie.model.Student;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.control.Alert.AlertType;
 
 import org.w3c.dom.Document;
@@ -40,6 +42,9 @@ import org.w3c.dom.Document;
 public class XmlManipulator {
 	
 	public static String path = "";
+	
+	private String xml;
+	private String xslt;
 	
 	public void validateAgainstXSD(Button bt)
 	{
@@ -188,6 +193,19 @@ public class XmlManipulator {
 		}
 		catch (Exception e) {
 			System.out.println(e);
+			e.printStackTrace();
+		}
+	}
+	
+	
+	public void xmlSigner(BorderPane bp) {
+		
+		XadesSigner xades = new XadesSigner(bp,path, getClass().getClassLoader().getResource("xml/schema.xsd").getPath(), getClass().getClassLoader().getResource("xml/stylesheet.xsl").getPath());
+		
+		try {
+			xades.sign();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

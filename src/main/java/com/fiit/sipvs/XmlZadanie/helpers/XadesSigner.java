@@ -1,23 +1,50 @@
 package com.fiit.sipvs.XmlZadanie.helpers;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+import javafx.scene.layout.BorderPane;
+import javafx.stage.FileChooser;
 import sk.ditec.zep.dsigner.xades.XadesSig;
 import sk.ditec.zep.dsigner.xades.plugin.DataObject;
 import sk.ditec.zep.dsigner.xades.plugins.xmlplugin.XmlPlugin;
 
-public class XadesSigner {
+public class XadesSigner extends AbstractTest {
+	
+	private String xml;
+	private String xsd;
+	private String xslt;
+	private BorderPane bp;
+	
+	public XadesSigner(BorderPane bp, String xml, String xsd, String xslt) {
+		
+		this.bp=bp;
+		this.xml = xml;
+		this.xsd = xsd;
+		this.xslt = xslt;
+	}
+	
+	
 
-	public void sign() {
+	public void sign() throws IOException {
 		XadesSig dSigner = new XadesSig();
 		dSigner.installLookAndFeel();
 		dSigner.installSwingLocalization();
 		dSigner.reset();
 		//dSigner.setLanguage("sk");
+		
+		 String DEFAULT_XSD_REF = "http://www.w3.org/2001/XMLSchema";
+		 String DEFAULT_XSLT_REF = "http://www.w3.org/1999/XSL/Transform";
+		
 
 		XmlPlugin xmlPlugin = new XmlPlugin();
-		DataObject xmlObject = xmlPlugin.createObject("XML1", "XML", readResource("xml/UI_26_vin_neobmedz/form.108.xml"),
-				readResource("xml/UI_26_vin_neobmedz/form.108.xsd"),
-				"http://www.egov.sk/mvsr/NEV/datatypes/Zapis/Ext/PodanieZiadostiOPrihlasenieImporteromSoZepUI.1.0.xsd", "http://www.example.com/xml/sb",
-				readResource("xml/UI_26_vin_neobmedz/form.108.sb.xslt"), "http://www.example.com/xml/sb");
+		DataObject xmlObject = xmlPlugin.createObject("XML1", "XML", readResource(xml),
+				readResource(xsd),
+				"", DEFAULT_XSD_REF,
+				readResource(xslt), DEFAULT_XSLT_REF);
 
 		if (xmlObject == null) {
 			System.out.println("XMLPlugin.createObject() errorMessage=" + xmlPlugin.getErrorMessage());
@@ -38,6 +65,25 @@ public class XadesSigner {
 		}		
 
 		System.out.println(dSigner.getSignedXmlWithEnvelope());
+		
+		//String SIGNED_FILE_PATH = "src//main//resources//signed_document.xml";
+		FileChooser fileChooser = new FileChooser();
+		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("XML files (*.xml)",
+				"*.xml");
+		fileChooser.getExtensionFilters().add(extFilter);
+
+		// Show save file dialog
+		File file = fileChooser.showSaveDialog(bp.getScene().getWindow());
+		
+		
+		FileWriter fileWriter = new FileWriter(file);
+		fileWriter.write(dSigner.getSignedXmlWithEnvelope());
+		fileWriter.flush();
+		fileWriter.close();
+		
 	}
+	
+	
+	
 	
 }

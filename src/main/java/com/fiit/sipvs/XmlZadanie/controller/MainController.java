@@ -187,6 +187,7 @@ public class MainController implements Initializable {
 					if (file != null) {
 						XmlManipulator.generateXml(c, students, file.getAbsolutePath());
 						validateXml.setDisable(false);
+						signXml.setDisable(false);
 					}
 					
 					
@@ -226,7 +227,8 @@ public class MainController implements Initializable {
 		signXml.setOnAction(new EventHandler<ActionEvent>() {
 
 			public void handle(ActionEvent event) {
-				//call XadesSigner
+				
+				xmlManipulator.xmlSigner(mainBorderPane);
 
 			}
 
@@ -244,6 +246,7 @@ public class MainController implements Initializable {
 		
 		validateXml.setDisable(true);
 		generateXsl.setDisable(true);
+		signXml.setDisable(true);
 	}
 	
 	
