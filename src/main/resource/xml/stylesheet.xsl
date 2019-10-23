@@ -1,7 +1,11 @@
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+<?xml version="1.0" encoding="utf-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:tt="http://www.example.org/sipvs">
     <xsl:output method="html"/>
 
-    <xsl:template match="/Applications/Application">
+    <xsl:template match="/tt:Application">
+        <xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html&gt;</xsl:text>
+        <html>
         <head>
             <style type="text/css">
                 .mainblock {
@@ -51,35 +55,35 @@
                 }
             </style>
         </head>
-        <html><body>
+        <body>
             <div class="mainblock">
                 <p class="title">Course assign</p>
                 <div>
                     <div class="field">
                         <p>Course Title</p>
-                        <p><xsl:value-of select="CourseTitle"/></p>
+                        <p><xsl:value-of select="//tt:CourseTitle"/></p>
                     </div>
                     <div class="field">
                         <p>Course Room</p>
-                        <p><xsl:value-of select="CourseRoom"/></p>
+                        <p><xsl:value-of select="//tt:CourseRoom"/></p>
                     </div>
                 </div>
                 <div>
                     <div class="field">
                         <p>Course Date</p>
-                        <p><xsl:value-of select="CourseDate"/></p>
+                        <p><xsl:value-of select="//tt:CourseDate"/></p>
                     </div>
                     <div class="field">
                         <p>Course Time</p>
-                        <p><xsl:value-of select="CourseTime"/></p>
+                        <p><xsl:value-of select="//tt:CourseTime"/></p>
                     </div>
                     <div class="field">
                         <p>Course Lessons</p>
-                        <p><xsl:value-of select="CourseLessons"/></p>
+                        <p><xsl:value-of select="//tt:CourseLessons"/></p>
                     </div>
                     <div class="field">
                         <p> </p>
-                        <xsl:apply-templates select="CourseNewbie"/>
+                        <xsl:apply-templates select="//tt:CourseNewbie"/>
                     </div>
                 </div>
             </div>
@@ -89,24 +93,25 @@
                     <th>Student LastName</th>
                     <th>Student Mobile</th>
                 </tr>
-                <xsl:for-each select="Students/Student">
+                <xsl:for-each select="//tt:Students/tt:Student">
                     <tr>
                         <td>
-                            <xsl:value-of select="StudentFirstName"/>
+                            <xsl:value-of select="//tt:StudentFirstName"/>
                         </td>
                         <td>
-                            <xsl:value-of select="StudentLastName"/>
+                            <xsl:value-of select="//tt:StudentLastName"/>
                         </td>
                         <td>
-                            <xsl:value-of select="StudentMobile"/>
+                            <xsl:value-of select="//tt:StudentMobile"/>
                         </td>
                     </tr>
                 </xsl:for-each>
             </table>
-        </body></html>
+        </body>
+        </html>
     </xsl:template>
 
-    <xsl:template match="/Applications/Application/CourseNewbie">
+    <xsl:template match="/tt:Application/tt:CourseNewbie">
         <p>
             <xsl:choose>
                 <xsl:when test="string(.) = 'true'">✔ </xsl:when>

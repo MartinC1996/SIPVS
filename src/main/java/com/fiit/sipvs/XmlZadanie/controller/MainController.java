@@ -186,8 +186,6 @@ public class MainController implements Initializable {
 
 					if (file != null) {
 						XmlManipulator.generateXml(c, students, file.getAbsolutePath());
-						validateXml.setDisable(false);
-						signXml.setDisable(false);
 					}
 					
 					
@@ -243,10 +241,6 @@ public class MainController implements Initializable {
 		table.setItems(students);
 		
 		courseTime.setText("21:00:00");
-		
-		validateXml.setDisable(true);
-		generateXsl.setDisable(true);
-		signXml.setDisable(true);
 	}
 	
 	

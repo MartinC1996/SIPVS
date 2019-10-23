@@ -41,10 +41,10 @@ public class XadesSigner extends AbstractTest {
 		
 
 		XmlPlugin xmlPlugin = new XmlPlugin();
-		DataObject xmlObject = xmlPlugin.createObject("XML1", "XML", readResource(xml),
+		DataObject xmlObject = xmlPlugin.createObject2("XML1", "XML", readResource(xml),
 				readResource(xsd),
-				"", DEFAULT_XSD_REF,
-				readResource(xslt), DEFAULT_XSLT_REF);
+				"http://www.example.org/sipvs", DEFAULT_XSD_REF,
+				readResource(xslt), DEFAULT_XSLT_REF, "HTML");
 
 		if (xmlObject == null) {
 			System.out.println("XMLPlugin.createObject() errorMessage=" + xmlPlugin.getErrorMessage());

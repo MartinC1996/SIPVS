@@ -41,13 +41,16 @@ import org.w3c.dom.Document;
 
 public class XmlManipulator {
 	
-	public static String path = "";
+	public static String path = null;
 	
 	private String xml;
 	private String xslt;
 	
 	public void validateAgainstXSD(Button bt)
 	{
+		if (path == null) {
+			path = getClass().getClassLoader().getResource("xml/sample.xml").getPath();
+		}
 		File file1 = new File(path);
 		File file2 = new File(getClass().getClassLoader().getResource("xml/schema.xsd").getPath());
 
@@ -69,15 +72,14 @@ public class XmlManipulator {
 	            SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 	        Schema schema = factory.newSchema(new StreamSource(xsd));
 	        Validator validator = schema.newValidator();
-	        validator.validate(new StreamSource(xml));
-	        
+			validator.validate(new StreamSource(xml));
+
 	        Alert alert = new Alert(AlertType.INFORMATION);
 			alert.setTitle("INFORMATION");
 			alert.setHeaderText("XSD SCHEMA VALIDATION");
 			alert.setContentText("XML IS VALID");
 			alert.showAndWait();
-	        bt.setDisable(false);
-	        
+
 	    }
 	    catch(Exception e)
 	    {
@@ -89,69 +91,72 @@ public class XmlManipulator {
 			alert.showAndWait();
 	    }
 	}
+
+	static String ns(String s) {
+		return "tt:" + s;
+	}
 	
 	public static void generateXml(Course course, ObservableList<Student> students, String path) {
 
 		  try {
-
-			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+		  	DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
 			Document doc = docBuilder.newDocument();
-			Element rootElement = doc.createElement("Applications");
-			doc.appendChild(rootElement);
-
-			Element aplication = doc.createElement("Application");
-			rootElement.appendChild(aplication);
+			Element application = doc.createElement(ns("Application"));
+			  application.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+			  application.setAttribute("xsi:schemaLocation", "http://www.example.org/sipvs schema.xsd");
+			  application.setAttribute("xmlns:tt", "http://www.example.org/sipvs");
+			doc.appendChild(application);
 
 			// shorten way
 			// staff.setAttribute("id", "1");
 
-			Element courseTitle = doc.createElement("CourseTitle");
+			Element courseTitle = doc.createElement(ns("CourseTitle"));
 			courseTitle.setTextContent(course.getCourseTitle());
-			aplication.appendChild(courseTitle);
+			application.appendChild(courseTitle);
 
-			Element courseRoom = doc.createElement("CourseRoom");
+			Element courseRoom = doc.createElement(ns("CourseRoom"));
 			courseRoom.setTextContent(course.getCourseRoom());
-			aplication.appendChild(courseRoom);
+			application.appendChild(courseRoom);
 
-			Element courseDate = doc.createElement("CourseDate");
+			Element courseDate = doc.createElement(ns("CourseDate"));
 			courseDate.setTextContent(course.getCourseDate());
-			aplication.appendChild(courseDate);
+			application.appendChild(courseDate);
 			
-			Element courseTime = doc.createElement("CourseTime");
+			Element courseTime = doc.createElement(ns("CourseTime"));
 			courseTime.setTextContent(course.getCourseTime());
-			aplication.appendChild(courseTime);
+			application.appendChild(courseTime);
 
-			Element courseNewbie = doc.createElement("CourseNewbie");
+			Element courseNewbie = doc.createElement(ns("CourseNewbie"));
 			courseNewbie.setTextContent(course.getCourseNewbie().toString());
-			aplication.appendChild(courseNewbie);
+			application.appendChild(courseNewbie);
 
-			Element courseLessons = doc.createElement("CourseLessons");
+			Element courseLessons = doc.createElement(ns("CourseLessons"));
 			courseLessons.setTextContent(course.getCourseLessons().toString());
-			aplication.appendChild(courseLessons);
+			application.appendChild(courseLessons);
 			
-			Element studentsElement = doc.createElement("Students");
+			Element studentsElement = doc.createElement(ns("Students"));
 			//studentsElement.setTextContent(course.getCourseLessons().toString());
-			aplication.appendChild(studentsElement);
+			application.appendChild(studentsElement);
 			
 			int i = 1 ;
 			for (Student student : students) {
-				Element studentElement = doc.createElement("Student");
+				Element studentElement = doc.createElement(ns("Student"));
 				//studentsElement.setTextContent(course.getCourseLessons().toString());
 				
 				studentElement.setAttribute("id", String.valueOf(i));
 				i++;
 				
-				Element studentFirstName = doc.createElement("StudentFirstName");
+				Element studentFirstName = doc.createElement(ns("StudentFirstName"));
 				studentFirstName.setTextContent(student.getFirstName());
 				studentElement.appendChild(studentFirstName);
 				
-				Element studentLastName = doc.createElement("StudentLastName");
+				Element studentLastName = doc.createElement(ns("StudentLastName"));
 				studentLastName.setTextContent(student.getLastName());
 				studentElement.appendChild(studentLastName);
 				
-				Element studentMobile = doc.createElement("StudentMobile");
+				Element studentMobile = doc.createElement(ns("StudentMobile"));
 				studentMobile.setTextContent(student.getMobile());
 				studentElement.appendChild(studentMobile);
 				
@@ -164,7 +169,7 @@ public class XmlManipulator {
 			DOMSource source = new DOMSource(doc);
 			
 			StreamResult result = new StreamResult(path);
-			XmlManipulator.path= path;
+			XmlManipulator.path = path;
 			// Output to console for testing
 			// StreamResult result = new StreamResult(System.out);
 
