@@ -189,7 +189,7 @@ public class XmlManipulator {
 		try {
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
 			Source xsl = new StreamSource(getClass().getClassLoader().getResource("xml/stylesheet.xsl").getPath());
-			Source xml = new StreamSource(path); 
+			Source xml = new StreamSource(getClass().getClassLoader().getResource("xml/sample2.xml").getPath()); 
 			
 			OutputStream outputStream = new FileOutputStream(saveFilePath);
 			Transformer transformer = transformerFactory.newTransformer(xsl);
@@ -204,14 +204,29 @@ public class XmlManipulator {
 	
 	
 	public void xmlSigner(BorderPane bp) {
-		
-		XadesSigner xades = new XadesSigner(bp,path, getClass().getClassLoader().getResource("xml/schema.xsd").getPath(), getClass().getClassLoader().getResource("xml/stylesheet.xsl").getPath());
-		
-		try {
-			xades.sign();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	 
+	
+		Thread one = new Thread() {
+		    public void run() {
+		        try {
+		        	String[] listOfXmls = new String[2];
+		        	listOfXmls[0] = getClass().getClassLoader().getResource("xml/sample.xml").getPath();
+		        	listOfXmls[1] = getClass().getClassLoader().getResource("xml/sample2.xml").getPath();
+		        	
+		        	
+		    		XadesSigner xades = new XadesSigner(bp, listOfXmls, getClass().getClassLoader().getResource("xml/schema.xsd").getPath(), getClass().getClassLoader().getResource("xml/stylesheet.xsl").getPath(),getClass().getClassLoader().getResource("xml").getPath());
+		    		xades.sign();
+		        } catch(IOException v) {
+		            System.out.println(v);
+		        }
+		    }  
+		};
+
+		one.start();
+	
+	
+	
+	
+	
 	}
 }

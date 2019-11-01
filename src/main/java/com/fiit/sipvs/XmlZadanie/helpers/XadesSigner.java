@@ -14,17 +14,20 @@ import sk.ditec.zep.dsigner.xades.plugins.xmlplugin.XmlPlugin;
 
 public class XadesSigner extends AbstractTest {
 	
-	private String xml;
+	private String[] xmls;
 	private String xsd;
 	private String xslt;
 	private BorderPane bp;
+	private String signed;
 	
-	public XadesSigner(BorderPane bp, String xml, String xsd, String xslt) {
+	public XadesSigner(BorderPane bp, String[] xmls, String xsd, String xslt, String signed) {
 		
 		this.bp=bp;
-		this.xml = xml;
+		this.xmls = xmls;
 		this.xsd = xsd;
 		this.xslt = xslt;
+		this.signed =signed + "/signed.xml";
+		System.out.println(this.signed);
 	}
 	
 	
@@ -37,25 +40,36 @@ public class XadesSigner extends AbstractTest {
 		//dSigner.setLanguage("sk");
 		
 		 String DEFAULT_XSD_REF = "http://www.w3.org/2001/XMLSchema";
-		 String DEFAULT_XSLT_REF = "http://www.w3.org/1999/XSL/Transform";
+		 String DEFAULT_XSLT_REF = "http://www.example.org/sipvs";
 		
 
 		XmlPlugin xmlPlugin = new XmlPlugin();
-		DataObject xmlObject = xmlPlugin.createObject2("XML1", "XML", readResource(xml),
-				readResource(xsd),
-				"http://www.example.org/sipvs", DEFAULT_XSD_REF,
-				readResource(xslt), DEFAULT_XSLT_REF, "HTML");
+		int rc = 0;
+		int i =1;
+		for (String xml : xmls) {
+			System.out.println(i);
+			DataObject xmlObject = xmlPlugin.createObject2("XML" + i, "XML"+ i, readResource(xml),
+					readResource(xsd),
+					"http://www.example.org/sipvs", DEFAULT_XSD_REF,
+					readResource(xslt), DEFAULT_XSLT_REF, "HTML");
+			
+			if (xmlObject == null) {
+				System.out.println("XMLPlugin.createObject() errorMessage=" + xmlPlugin.getErrorMessage());
+				return;
+			}
 
-		if (xmlObject == null) {
-			System.out.println("XMLPlugin.createObject() errorMessage=" + xmlPlugin.getErrorMessage());
-			return;
+			rc = dSigner.addObject(xmlObject);
+			if (rc != 0) {
+				System.out.println("XadesSig.addObject() errorCode=" + rc + ", errorMessage=" + dSigner.getErrorMessage());
+				return;
+			}
+			
+			i++;
 		}
-
-		int rc = dSigner.addObject(xmlObject);
-		if (rc != 0) {
-			System.out.println("XadesSig.addObject() errorCode=" + rc + ", errorMessage=" + dSigner.getErrorMessage());
-			return;
-		}
+		
+		
+		
+		
 
 		rc = dSigner.sign20("signatureId20", "http://www.w3.org/2001/04/xmlenc#sha256", "urn:oid:1.3.158.36061701.1.2.2", "dataEnvelopeId",
 				"dataEnvelopeURI", "dataEnvelopeDescr");
@@ -66,17 +80,8 @@ public class XadesSigner extends AbstractTest {
 
 		System.out.println(dSigner.getSignedXmlWithEnvelope());
 		
-		//String SIGNED_FILE_PATH = "src//main//resources//signed_document.xml";
-		FileChooser fileChooser = new FileChooser();
-		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("XML files (*.xml)",
-				"*.xml");
-		fileChooser.getExtensionFilters().add(extFilter);
-
-		// Show save file dialog
-		File file = fileChooser.showSaveDialog(bp.getScene().getWindow());
 		
-		
-		FileWriter fileWriter = new FileWriter(file);
+		FileWriter fileWriter = new FileWriter(new File(this.signed));
 		fileWriter.write(dSigner.getSignedXmlWithEnvelope());
 		fileWriter.flush();
 		fileWriter.close();
