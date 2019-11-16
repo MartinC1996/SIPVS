@@ -1,7 +1,6 @@
 package com.fiit.sipvs.XmlZadanie.helpers;
 
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 
 import javax.xml.XMLConstants;
 import javax.xml.transform.stream.StreamSource;
@@ -9,11 +8,9 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Base64;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -25,6 +22,10 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.bouncycastle.tsp.TSPAlgorithms;
+import org.bouncycastle.tsp.TimeStampRequest;
+import org.bouncycastle.tsp.TimeStampRequestGenerator;
+import org.bouncycastle.tsp.TimeStampResponse;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 
@@ -90,6 +91,63 @@ public class XmlManipulator {
 			alert.setContentText("ERROR IN XMLr");
 			alert.showAndWait();
 	    }
+	}
+
+	public static void addTimestamp() {
+
+		byte[] data = new byte[20]; // TODO replace with signed XML
+
+		byte request[] = null;
+		String result = null;
+		TimeStampResponse response = null;
+
+		// request
+		TimeStampRequestGenerator requestGenerator = new TimeStampRequestGenerator();
+		TimeStampRequest timeStampRequest = requestGenerator.generate(TSPAlgorithms.SHA256, data);
+		try {
+			request = timeStampRequest.getEncoded();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		// connection
+		OutputStream out;
+		HttpURLConnection con;
+		try {
+			URL url = new URL("http://test.ditec.sk/timestampws/TS.aspx");
+			con = (HttpURLConnection) url.openConnection();
+			con.setDoOutput(true);
+			con.setDoInput(true);
+			con.setRequestMethod("POST");
+			con.setRequestProperty("Content-type", "application/timestamp-query");
+			con.setRequestProperty("Content-length", String.valueOf(request.length));
+			out = con.getOutputStream();
+			out.write(request);
+			out.flush();
+			if (con.getResponseCode() != HttpURLConnection.HTTP_OK) {
+				throw new IOException("HTTP Error: " + con.getResponseCode() + " - " + con.getResponseMessage());
+			}
+			InputStream in = url.openStream();
+			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+			StringBuilder builder = new StringBuilder();
+			String line;
+			while ((line = reader.readLine()) != null) {
+				builder.append(line);
+			}
+			result = builder.toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		// response
+		String timestampToken = null;
+		try {
+			response = new TimeStampResponse(Base64.getDecoder().decode(result));
+			timestampToken = new String(Base64.getEncoder().encode(response.getTimeStampToken().getEncoded()));
+		}  catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.out.println(timestampToken);
 	}
 
 	static String ns(String s) {
@@ -203,7 +261,7 @@ public class XmlManipulator {
 	}
 	
 	
-	public void xmlSigner(BorderPane bp) {
+	public void xmlSigner(final BorderPane bp) {
 	 
 	
 		Thread one = new Thread() {
