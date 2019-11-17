@@ -80,6 +80,7 @@
           <Button fx:id="validateXml" mnemonicParsing="false" prefHeight="31.0" prefWidth="150.0" text="%validateXml" />
             <Button fx:id="generateXsl" mnemonicParsing="false" prefHeight="31.0" prefWidth="150.0" text="%generateXsl" />
             <Button fx:id="signXml" mnemonicParsing="false" prefHeight="31.0" prefWidth="150.0" text="%signXml" />
+            <Button fx:id="addTS" mnemonicParsing="false" prefHeight="31.0" prefWidth="150.0" text="%addTS" />
         </items>
       </ToolBar>
    </bottom>
